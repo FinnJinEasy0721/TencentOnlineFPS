@@ -1,8 +1,9 @@
 # Ignore everything by default
 *
 
-# Allow .gitignore
+# Allow .gitignore and README.md
 !.gitignore
+!README.md
 
 # === Custom C++ Source Code ===
 # Re-include directory paths (git requires each level to be un-ignored)
