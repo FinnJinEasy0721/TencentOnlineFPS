@@ -13,92 +13,92 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateSprintMeterDelegate, float, P
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSprintStateChangedDelegate, bool, bSprinting);
 
 /**
- *  Simple first person horror character
- *  Provides stamina-based sprinting
+ *  第一人称恐怖角色
+ *  提供基于体力的冲刺机制
  */
 UCLASS(abstract)
 class ONLINEFPS_API AHorrorCharacter : public AOnlineFPSCharacter
 {
 	GENERATED_BODY()
 
-	/** Player light source */
+	/** 玩家光源 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpotLightComponent* SpotLight;
 	
 protected:
 
-	/** Fire weapon input action */
+	/** 冲刺输入动作 */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	UInputAction* SprintAction;
 
-	/** If true, we're sprinting */
+	/** 是否正在冲刺 */
 	bool bSprinting = false;
 
-	/** If true, we're recovering stamina */
+	/** 是否正在恢复体力 */
 	bool bRecovering = false;
 
-	/** Default walk speed when not sprinting or recovering */
+	/** 非冲刺和非恢复时的默认行走速度 */
 	UPROPERTY(EditAnywhere, Category="Walk")
 	float WalkSpeed = 250.0f;
 
-	/** Time interval for sprinting stamina ticks */
+	/** 冲刺体力计时的间隔时间 */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 1, Units = "s"))
 	float SprintFixedTickTime = 0.03333f;
 
-	/** Sprint stamina amount. Maxes at SprintTime */
+	/** 冲刺体力值，最大值为 SprintTime */
 	float SprintMeter = 0.0f;
 
-	/** How long we can sprint for, in seconds */
+	/** 可冲刺的持续时间（秒） */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
 	float SprintTime = 3.0f;
 
-	/** Walk speed while sprinting */
+	/** 冲刺时的行走速度 */
 	UPROPERTY(EditAnywhere, Category="Sprint", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
 	float SprintSpeed = 600.0f;
 
-	/** Walk speed while recovering stamina */
+	/** 恢复体力时的行走速度 */
 	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "cm/s"))
 	float RecoveringWalkSpeed = 150.0f;
 
-	/** Time it takes for the sprint meter to recover */
+	/** 体力恢复所需时间 */
 	UPROPERTY(EditAnywhere, Category="Recovery", meta = (ClampMin = 0, ClampMax = 10, Units = "s"))
 	float RecoveryTime = 0.0f;
 
-	/** Sprint tick timer */
+	/** 冲刺计时定时器 */
 	FTimerHandle SprintTimer;
 
 public:
 
-	/** Delegate called when the sprint meter should be updated */
+	/** 冲刺体力值更新时调用的委托 */
 	FUpdateSprintMeterDelegate OnSprintMeterUpdated;
 
-	/** Delegate called when we start and stop sprinting */
+	/** 开始和停止冲刺时调用的委托 */
 	FSprintStateChangedDelegate OnSprintStateChanged;
 
 protected:
 
-	/** Constructor */
+	/** 构造函数 */
 	AHorrorCharacter();
 
-	/** Gameplay initialization */
+	/** 游戏初始化 */
 	virtual void BeginPlay() override;
 
-	/** Gameplay cleanup */
+	/** 游戏清理 */
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
-	/** Set up input action bindings */
+	/** 设置输入动作绑定 */
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
 protected:
 
-	/** Starts sprinting behavior */
+	/** 开始冲刺行为 */
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void DoStartSprint();
 
-	/** Stops sprinting behavior */
+	/** 停止冲刺行为 */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DoEndSprint();
 
-	/** Called while sprinting at a fixed time interval */
+	/** 冲刺时以固定时间间隔调用 */
 	void SprintFixedTick();
 };

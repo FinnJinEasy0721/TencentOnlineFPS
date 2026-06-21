@@ -14,72 +14,72 @@ DECLARE_DELEGATE_TwoParams(FShooterPerceptionUpdatedDelegate, AActor*, const FAI
 DECLARE_DELEGATE_OneParam(FShooterPerceptionForgottenDelegate, AActor*);
 
 /**
- *  Simple AI Controller for a first person shooter enemy
+ *  第一人称射击游戏敌人的简单AI控制器
  */
 UCLASS(abstract)
 class ONLINEFPS_API AShooterAIController : public AAIController
 {
 	GENERATED_BODY()
 	
-	/** Runs the behavior StateTree for this NPC */
+	/** 运行此NPC的行为状态树 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UStateTreeAIComponent* StateTreeAI;
 
-	/** Detects other actors through sight, hearing and other senses */
+	/** 通过视觉、听觉等感官检测其他Actor */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UAIPerceptionComponent* AIPerception;
 
 protected:
 
-	/** Team tag for pawn friend or foe identification */
+	/** 用于识别敌我的队伍标签 */
 	UPROPERTY(EditAnywhere, Category="Shooter")
 	FName TeamTag = FName("Enemy");
 
-	/** Enemy currently being targeted */
+	/** 当前瞄准的敌人 */
 	TObjectPtr<AActor> TargetEnemy;
 
 public:
 
-	/** Called when an AI perception has been updated. StateTree task delegate hook */
+	/** AI感知更新时调用。状态树任务委托钩子 */
 	FShooterPerceptionUpdatedDelegate OnShooterPerceptionUpdated;
 
-	/** Called when an AI perception has been forgotten. StateTree task delegate hook */
+	/** AI感知遗忘时调用。状态树任务委托钩子 */
 	FShooterPerceptionForgottenDelegate OnShooterPerceptionForgotten;
 
 public:
 
-	/** Constructor */
+	/** 构造函数 */
 	AShooterAIController();
 
 protected:
 
-	/** Pawn initialization */
+	/** Pawn初始化 */
 	virtual void OnPossess(APawn* InPawn) override;
 
 protected:
 
-	/** Called when the possessed pawn dies */
+	/** 被操控的Pawn死亡时调用 */
 	UFUNCTION()
 	void OnPawnDeath();
 
 public:
 
-	/** Sets the targeted enemy */
+	/** 设置瞄准的敌人 */
 	void SetCurrentTarget(AActor* Target);
 
-	/** Clears the targeted enemy */
+	/** 清除瞄准的敌人 */
 	void ClearCurrentTarget();
 
-	/** Returns the targeted enemy */
+	/** 返回瞄准的敌人 */
 	AActor* GetCurrentTarget() const { return TargetEnemy; };
 
 protected:
 
-	/** Called when the AI perception component updates a perception on a given actor */
+	/** AI感知组件更新某Actor感知时调用 */
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
-	/** Called when the AI perception component forgets a given actor */
+	/** AI感知组件遗忘某Actor时调用 */
 	UFUNCTION()
 	void OnPerceptionForgotten(AActor* Actor);
 };

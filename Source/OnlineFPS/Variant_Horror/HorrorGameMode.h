@@ -7,7 +7,7 @@
 #include "HorrorGameMode.generated.h"
 
 /**
- *  Simple GameMode for a first person horror game
+ *  第一人称恐怖游戏的简单游戏模式
  */
 UCLASS(abstract)
 class ONLINEFPS_API AHorrorGameMode : public AGameModeBase
@@ -16,6 +16,6 @@ class ONLINEFPS_API AHorrorGameMode : public AGameModeBase
 	
 public:
 
-	/** Constructor */
+	/** 构造函数 */
 	AHorrorGameMode();
 };

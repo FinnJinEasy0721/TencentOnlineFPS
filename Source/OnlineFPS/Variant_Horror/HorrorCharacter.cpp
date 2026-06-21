@@ -12,7 +12,7 @@
 
 AHorrorCharacter::AHorrorCharacter()
 {
-	// create the spotlight
+	// 创建聚光灯
 	SpotLight = CreateDefaultSubobject<USpotLightComponent>(TEXT("SpotLight"));
 	SpotLight->SetupAttachment(GetFirstPersonCameraComponent());
 
@@ -28,13 +28,13 @@ void AHorrorCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// initialize sprint meter to max
+	// 将冲刺体力值初始化为最大值
 	SprintMeter = SprintTime;
 
-	// Initialize the walk speed
+	// 初始化行走速度
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
-	// start the sprint tick timer
+	// 启动冲刺计时定时器
 	GetWorld()->GetTimerManager().SetTimer(SprintTimer, this, &AHorrorCharacter::SprintFixedTick, SprintFixedTickTime, true);
 }
 
@@ -42,7 +42,7 @@ void AHorrorCharacter::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	// clear the sprint timer
+	// 清除冲刺定时器
 	GetWorld()->GetTimerManager().ClearTimer(SprintTimer);
 }
 
@@ -51,10 +51,10 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	{
-		// Set up action bindings
+		// 设置动作绑定
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 		{
-			// Sprinting
+			// 冲刺
 			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AHorrorCharacter::DoStartSprint);
 			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AHorrorCharacter::DoEndSprint);
 
@@ -64,16 +64,16 @@ void AHorrorCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AHorrorCharacter::DoStartSprint()
 {
-	// set the sprinting flag
+	// 设置冲刺标志
 	bSprinting = true;
 
-	// are we out of recovery mode?
+	// 是否已脱离恢复状态？
 	if (!bRecovering)
 	{
-		// set the sprint walk speed
+		// 设置冲刺行走速度
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 
-		// call the sprint state changed delegate
+		// 调用冲刺状态变化委托
 		OnSprintStateChanged.Broadcast(true);
 	}
 
@@ -81,63 +81,63 @@ void AHorrorCharacter::DoStartSprint()
 
 void AHorrorCharacter::DoEndSprint()
 {
-	// set the sprinting flag
+	// 设置冲刺标志
 	bSprinting = false;
 
-	// are we out of recovery mode?
+	// 是否已脱离恢复状态？
 	if (!bRecovering)
 	{
-		// set the default walk speed
+		// 设置默认行走速度
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
-		// call the sprint state changed delegate
+		// 调用冲刺状态变化委托
 		OnSprintStateChanged.Broadcast(false);
 	}
 }
 
 void AHorrorCharacter::SprintFixedTick()
 {
-	// are we out of recovery, still have stamina and are moving faster than our walk speed?
+	// 是否已脱离恢复、仍有体力且移动速度高于行走速度？
 	if (bSprinting && !bRecovering && GetVelocity().Length() > WalkSpeed)
 	{
 
-		// do we still have meter to burn?
+		// 是否还有体力可消耗？
 		if (SprintMeter > 0.0f)
 		{
-			// update the sprint meter
+			// 更新冲刺体力值
 			SprintMeter = FMath::Max(SprintMeter - SprintFixedTickTime, 0.0f);
 
-			// have we run out of stamina?
+			// 体力是否已耗尽？
 			if (SprintMeter <= 0.0f)
 			{
-				// raise the recovering flag
+				// 设置恢复标志
 				bRecovering = true;
 
-				// set the recovering walk speed
+				// 设置恢复时的行走速度
 				GetCharacterMovement()->MaxWalkSpeed = RecoveringWalkSpeed;
 			}
 		}
 		
 	} else {
 
-		// recover stamina
+		// 恢复体力
 		SprintMeter = FMath::Min(SprintMeter + SprintFixedTickTime, SprintTime);
 
 		if (SprintMeter >= SprintTime)
 		{
-			// lower the recovering flag
+			// 清除恢复标志
 			bRecovering = false;
 
-			// set the walk or sprint speed depending on whether the sprint button is down
+			// 根据冲刺按键是否按下设置行走或冲刺速度
 			GetCharacterMovement()->MaxWalkSpeed = bSprinting ? SprintSpeed : WalkSpeed;
 
-			// update the sprint state depending on whether the button is down or not
+			// 根据按键状态更新冲刺状态
 			OnSprintStateChanged.Broadcast(bSprinting);
 		}
 
 	}
 
-	// broadcast the sprint meter updated delegate
+	// 广播冲刺体力值更新委托
 	OnSprintMeterUpdated.Broadcast(SprintMeter / SprintTime);
 
 }

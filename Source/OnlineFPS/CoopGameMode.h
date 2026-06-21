@@ -21,43 +21,43 @@ protected:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 public:
-	// Player join/leave
+	// 玩家加入/离开
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
-	// Match start
+	// 比赛开始
 	virtual void HandleMatchHasStarted() override;
 
-	// Enemy management
+	// 敌人管理
 	void EnemySpawned();
 	void EnemyKilled(AController* Killer);
 	void PlayerDied(APlayerController* Victim);
 
-	// Win/lose condition check
+	// 胜负条件检查
 	void CheckMatchEndCondition();
 
-	// Win/lose broadcast delegates (for UI binding)
+	// 胜负广播委托（供UI绑定）
 	UPROPERTY(BlueprintAssignable, Category = "Game Events")
 	FOnGameWon OnGameWon;
 	UPROPERTY(BlueprintAssignable, Category = "Game Events")
 	FOnGameLost OnGameLost;
 
 protected:
-	// Current active enemy count
+	// 当前活跃敌人数量
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Stats")
 	int32 ActiveEnemyCount;
 
-	// Current alive player count
+	// 当前存活玩家数量
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Stats")
 	int32 AlivePlayerCount;
 
-	// Max player count
+	// 最大玩家数量
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Game Settings")
 	int32 MaxPlayers;
 
-	// Match ended flag
+	// 比赛已结束标志
 	bool bMatchEnded;
 
-	// Return to main menu
+	// 返回主菜单
 	void ReturnToMainMenu();
 };

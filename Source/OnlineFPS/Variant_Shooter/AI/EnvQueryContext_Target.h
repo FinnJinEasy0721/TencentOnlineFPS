@@ -7,7 +7,7 @@
 #include "EnvQueryContext_Target.generated.h"
 
 /**
- *  Custom EnvQuery Context that returns the actor currently targeted by an NPC
+ *  自定义环境查询上下文，返回NPC当前瞄准的Actor
  */
 UCLASS()
 class ONLINEFPS_API UEnvQueryContext_Target : public UEnvQueryContext
@@ -16,7 +16,7 @@ class ONLINEFPS_API UEnvQueryContext_Target : public UEnvQueryContext
 	
 public:
 
-	/** Provides the context locations or actors for this EnvQuery */
+	/** 为此环境查询提供上下文位置或Actor */
 	virtual void ProvideContext(FEnvQueryInstance& QueryInstance, FEnvQueryContextData& ContextData) const override;
 
 };

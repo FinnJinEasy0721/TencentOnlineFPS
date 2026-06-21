@@ -13,7 +13,7 @@
 
 AHorrorPlayerController::AHorrorPlayerController()
 {
-	// set the player camera manager class
+	// 设置玩家摄像机管理器类
 	PlayerCameraManagerClass = AOnlineFPSCameraManager::StaticClass();
 }
 
@@ -21,15 +21,15 @@ void AHorrorPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// only spawn touch controls on local player controllers
+	// 仅在本机玩家控制器上生成触控控件
 	if (SVirtualJoystick::ShouldDisplayTouchInterface() && IsLocalPlayerController())
 	{
-		// spawn the mobile controls widget
+		// 生成移动端控件
 		MobileControlsWidget = CreateWidget<UUserWidget>(this, MobileControlsWidgetClass);
 
 		if (MobileControlsWidget)
 		{
-			// add the controls to the player screen
+			// 将控件添加到玩家屏幕
 			MobileControlsWidget->AddToPlayerScreen(0);
 
 		} else {
@@ -45,13 +45,13 @@ void AHorrorPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
-	// only spawn UI on local player controllers
+	// 仅在本机玩家控制器上生成UI
 	if (IsLocalPlayerController())
 	{
-		// set up the UI for the character
+		// 为角色设置UI
 		if (AHorrorCharacter* HorrorCharacter = Cast<AHorrorCharacter>(aPawn))
 		{
-			// create the UI
+			// 创建UI
 			if (!HorrorUI)
 			{
 				HorrorUI = CreateWidget<UHorrorUI>(this, HorrorUIClass);
@@ -68,10 +68,10 @@ void AHorrorPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	
-	// only add IMCs for local player controllers
+	// 仅在本机玩家控制器上添加输入映射上下文
 	if (IsLocalPlayerController())
 	{
-		// Add Input Mapping Contexts
+		// 添加输入映射上下文
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
@@ -79,7 +79,7 @@ void AHorrorPlayerController::SetupInputComponent()
 				Subsystem->AddMappingContext(CurrentContext, 0);
 			}
 
-			// only add these IMCs if we're not using mobile touch input
+			// 仅在不使用移动端触控输入时添加这些映射
 			if (!SVirtualJoystick::ShouldDisplayTouchInterface())
 			{
 				for (UInputMappingContext* CurrentContext : MobileExcludedMappingContexts)

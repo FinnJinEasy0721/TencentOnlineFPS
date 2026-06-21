@@ -5,5 +5,5 @@
 
 AHorrorGameMode::AHorrorGameMode()
 {
-	// stub
+	// 占位
 }

@@ -10,9 +10,9 @@ class UInputMappingContext;
 class UHorrorUI;
 
 /**
- *  Player Controller for a first person horror game
- *  Manages input mappings
- *  Manages UI
+ *  第一人称恐怖游戏的玩家控制器
+ *  管理输入映射
+ *  管理UI
  */
 UCLASS(abstract)
 class ONLINEFPS_API AHorrorPlayerController : public APlayerController
@@ -21,42 +21,42 @@ class ONLINEFPS_API AHorrorPlayerController : public APlayerController
 	
 protected:
 
-	/** Type of UI widget to spawn */
+	/** 要生成的UI控件类型 */
 	UPROPERTY(EditAnywhere, Category="Horror|UI")
 	TSubclassOf<UHorrorUI> HorrorUIClass;
 
-	/** Pointer to the UI widget */
+	/** UI控件指针 */
 	TObjectPtr<UHorrorUI> HorrorUI;
 
 public:
 
-	/** Constructor */
+	/** 构造函数 */
 	AHorrorPlayerController();
 
 protected:
 
-	/** Input Mapping Contexts */
+	/** 输入映射上下文 */
 	UPROPERTY(EditAnywhere, Category ="Input|Input Mappings")
 	TArray<UInputMappingContext*> DefaultMappingContexts;
 
-	/** Input Mapping Contexts */
+	/** 输入映射上下文 */
 	UPROPERTY(EditAnywhere, Category="Input|Input Mappings")
 	TArray<UInputMappingContext*> MobileExcludedMappingContexts;
 
-	/** Mobile controls widget to spawn */
+	/** 要生成的移动端控件 */
 	UPROPERTY(EditAnywhere, Category="Input|Touch Controls")
 	TSubclassOf<UUserWidget> MobileControlsWidgetClass;
 
-	/** Pointer to the mobile controls widget */
+	/** 移动端控件指针 */
 	TObjectPtr<UUserWidget> MobileControlsWidget;
 
-	/** Gameplay Initialization */
+	/** 游戏初始化 */
 	virtual void BeginPlay() override;
 
-	/** Possessed pawn initialization */
+	/** 被操控Pawn初始化 */
 	virtual void OnPossess(APawn* aPawn) override;
 
-	/** Input mapping context setup */
+	/** 输入映射上下文设置 */
 	virtual void SetupInputComponent() override;
 
 };

@@ -10,13 +10,13 @@
 
 AShooterAIController::AShooterAIController()
 {
-	// create the StateTree component
+	// 创建状态树组件
 	StateTreeAI = CreateDefaultSubobject<UStateTreeAIComponent>(TEXT("StateTreeAI"));
 
-	// create the AI perception component. It will be configured in BP
+	// 创建AI感知组件，将在蓝图中配置
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 
-	// subscribe to the AI perception delegates
+	// 订阅AI感知委托
 	AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &AShooterAIController::OnPerceptionUpdated);
 	AIPerception->OnTargetPerceptionForgotten.AddDynamic(this, &AShooterAIController::OnPerceptionForgotten);
 }
@@ -25,29 +25,29 @@ void AShooterAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	// ensure we're possessing an NPC
+	// 确保正在操控的是NPC
 	if (AShooterNPC* NPC = Cast<AShooterNPC>(InPawn))
 	{
-		// add the team tag to the pawn
+		// 为Pawn添加队伍标签
 		NPC->Tags.Add(TeamTag);
 
-		// subscribe to the pawn's OnDeath delegate
+		// 订阅Pawn的死亡委托
 		NPC->OnPawnDeath.AddDynamic(this, &AShooterAIController::OnPawnDeath);
 	}
 }
 
 void AShooterAIController::OnPawnDeath()
 {
-	// stop movement
+	// 停止移动
 	GetPathFollowingComponent()->AbortMove(*this, FPathFollowingResultFlags::UserAbort);
 
-	// stop StateTree logic
+	// 停止状态树逻辑
 	StateTreeAI->StopLogic(FString(""));
 
-	// unpossess the pawn
+	// 取消操控Pawn
 	UnPossess();
 
-	// destroy this controller
+	// 销毁此控制器
 	Destroy();
 }
 
@@ -63,12 +63,12 @@ void AShooterAIController::ClearCurrentTarget()
 
 void AShooterAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	// pass the data to the StateTree delegate hook
+	// 将数据传递给状态树委托钩子
 	OnShooterPerceptionUpdated.ExecuteIfBound(Actor, Stimulus);
 }
 
 void AShooterAIController::OnPerceptionForgotten(AActor* Actor)
 {
-	// pass the data to the StateTree delegate hook
+	// 将数据传递给状态树委托钩子
 	OnShooterPerceptionForgotten.ExecuteIfBound(Actor);
 }

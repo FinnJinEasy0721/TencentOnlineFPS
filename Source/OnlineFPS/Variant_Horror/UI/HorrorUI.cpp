@@ -12,12 +12,12 @@ void UHorrorUI::SetupCharacter(AHorrorCharacter* HorrorCharacter)
 
 void UHorrorUI::OnSprintMeterUpdated(float Percent)
 {
-	// call the BP handler
+	// 调用蓝图处理函数
 	BP_SprintMeterUpdated(Percent);
 }
 
 void UHorrorUI::OnSprintStateChanged(bool bSprinting)
 {
-	// call the BP handler
+	// 调用蓝图处理函数
 	BP_SprintStateChanged(bSprinting);
 }

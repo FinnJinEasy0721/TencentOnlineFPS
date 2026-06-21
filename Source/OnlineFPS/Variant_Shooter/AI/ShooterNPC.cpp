@@ -16,7 +16,7 @@ void AShooterNPC::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// spawn the weapon
+	// 生成武器
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = this;
@@ -29,22 +29,22 @@ void AShooterNPC::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	// clear the death timer
+	// 清除死亡定时器
 	GetWorld()->GetTimerManager().ClearTimer(DeathTimer);
 }
 
 float AShooterNPC::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	// ignore if already dead
+	// 如果已死亡则忽略
 	if (bIsDead)
 	{
 		return 0.0f;
 	}
 
-	// Reduce HP
+	// 扣减血量
 	CurrentHP -= Damage;
 
-	// Have we depleted HP?
+	// 血量是否耗尽？
 	if (CurrentHP <= 0.0f)
 	{
 		Die();
@@ -57,61 +57,61 @@ void AShooterNPC::AttachWeaponMeshes(AShooterWeapon* WeaponToAttach)
 {
 	const FAttachmentTransformRules AttachmentRule(EAttachmentRule::SnapToTarget, false);
 
-	// attach the weapon actor
+	// 挂载武器Actor
 	WeaponToAttach->AttachToActor(this, AttachmentRule);
 
-	// attach the weapon meshes
+	// 挂载武器网格体
 	WeaponToAttach->GetFirstPersonMesh()->AttachToComponent(GetFirstPersonMesh(), AttachmentRule, FirstPersonWeaponSocket);
 	WeaponToAttach->GetThirdPersonMesh()->AttachToComponent(GetMesh(), AttachmentRule, FirstPersonWeaponSocket);
 }
 
 void AShooterNPC::PlayFiringMontage(UAnimMontage* Montage)
 {
-	// unused
+	// 未使用
 }
 
 void AShooterNPC::AddWeaponRecoil(float Recoil)
 {
-	// unused
+	// 未使用
 }
 
 void AShooterNPC::UpdateWeaponHUD(int32 CurrentAmmo, int32 MagazineSize)
 {
-	// unused
+	// 未使用
 }
 
 FVector AShooterNPC::GetWeaponTargetLocation()
 {
-	// start aiming from the camera location
+	// 从摄像机位置开始瞄准
 	const FVector AimSource = GetFirstPersonCameraComponent()->GetComponentLocation();
 
 	FVector AimDir, AimTarget = FVector::ZeroVector;
 
-	// do we have an aim target?
+	// 是否有瞄准目标？
 	if (CurrentAimTarget)
 	{
-		// target the actor location
+		// 瞄准Actor位置
 		AimTarget = CurrentAimTarget->GetActorLocation();
 
-		// apply a vertical offset to target head/feet
+		// 对目标头部/脚部施加垂直偏移
 		AimTarget.Z += FMath::RandRange(MinAimOffsetZ, MaxAimOffsetZ);
 
-		// get the aim direction and apply randomness in a cone
+		// 获取瞄准方向并施加锥形随机偏差
 		AimDir = (AimTarget - AimSource).GetSafeNormal();
 		AimDir = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(AimDir, AimVarianceHalfAngle);
 
 		
 	} else {
 
-		// no aim target, so just use the camera facing
+		// 无瞄准目标，直接使用摄像机朝向
 		AimDir = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(GetFirstPersonCameraComponent()->GetForwardVector(), AimVarianceHalfAngle);
 
 	}
 
-	// calculate the unobstructed aim target location
+	// 计算无遮挡的瞄准目标位置
 	AimTarget = AimSource + (AimDir * AimRange);
 
-	// run a visibility trace to see if there's obstructions
+	// 执行可见性射线检测是否有遮挡
 	FHitResult OutHit;
 
 	FCollisionQueryParams QueryParams;
@@ -119,65 +119,65 @@ FVector AShooterNPC::GetWeaponTargetLocation()
 
 	GetWorld()->LineTraceSingleByChannel(OutHit, AimSource, AimTarget, ECC_Visibility, QueryParams);
 
-	// return either the impact point or the trace end
+	// 返回命中点或射线终点
 	return OutHit.bBlockingHit ? OutHit.ImpactPoint : OutHit.TraceEnd;
 }
 
 void AShooterNPC::AddWeaponClass(const TSubclassOf<AShooterWeapon>& InWeaponClass)
 {
-	// unused
+	// 未使用
 }
 
 void AShooterNPC::OnWeaponActivated(AShooterWeapon* InWeapon)
 {
-	// unused
+	// 未使用
 }
 
 void AShooterNPC::OnWeaponDeactivated(AShooterWeapon* InWeapon)
 {
-	// unused
+	// 未使用
 }
 
 void AShooterNPC::OnSemiWeaponRefire()
 {
-	// are we still shooting?
+	// 是否仍在射击？
 	if (bIsShooting)
 	{
-		// fire the weapon
+		// 开火
 		Weapon->StartFiring();
 	}
 }
 
 void AShooterNPC::Die()
 {
-	// ignore if already dead
+	// 如果已死亡则忽略
 	if (bIsDead)
 	{
 		return;
 	}
 
-	// raise the dead flag
+	// 设置死亡标志
 	bIsDead = true;
 
-	// increment the team score
+	// 增加队伍分数
 	if (AShooterGameMode* GM = Cast<AShooterGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		GM->IncrementTeamScore(TeamByte);
 	}
 
-	// disable capsule collision
+	// 禁用胶囊体碰撞
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	// stop movement
+	// 停止移动
 	GetCharacterMovement()->StopMovementImmediately();
 	GetCharacterMovement()->StopActiveMovement();
 
-	// enable ragdoll physics on the third person mesh
+	// 在第三人称网格体上启用布娃娃物理
 	GetMesh()->SetCollisionProfileName(RagdollCollisionProfile);
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetPhysicsBlendWeight(1.0f);
 
-	// schedule actor destruction
+	// 安排Actor销毁
 	GetWorld()->GetTimerManager().SetTimer(DeathTimer, this, &AShooterNPC::DeferredDestruction, DeferredDestructionTime, false);
 }
 
@@ -188,21 +188,21 @@ void AShooterNPC::DeferredDestruction()
 
 void AShooterNPC::StartShooting(AActor* ActorToShoot)
 {
-	// save the aim target
+	// 保存瞄准目标
 	CurrentAimTarget = ActorToShoot;
 
-	// raise the flag
+	// 设置标志
 	bIsShooting = true;
 
-	// signal the weapon
+	// 通知武器
 	Weapon->StartFiring();
 }
 
 void AShooterNPC::StopShooting()
 {
-	// lower the flag
+	// 清除标志
 	bIsShooting = false;
 
-	// signal the weapon
+	// 通知武器
 	Weapon->StopFiring();
 }

@@ -12,9 +12,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPawnDeathDelegate);
 class AShooterWeapon;
 
 /**
- *  A simple AI-controlled shooter game NPC
- *  Executes its behavior through a StateTree managed by its AI Controller
- *  Holds and manages a weapon
+ *  简单的AI控制射击游戏NPC
+ *  通过AI控制器管理的状态树执行行为
+ *  持有并管理武器
  */
 UCLASS(abstract)
 class ONLINEFPS_API AShooterNPC : public AOnlineFPSCharacter, public IShooterWeaponHolder
@@ -23,131 +23,131 @@ class ONLINEFPS_API AShooterNPC : public AOnlineFPSCharacter, public IShooterWea
 
 public:
 
-	/** Current HP for this character. It dies if it reaches zero through damage */
+	/** 此角色的当前血量。受到伤害降为零时死亡 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Damage")
 	float CurrentHP = 100.0f;
 
 protected:
 
-	/** Name of the collision profile to use during ragdoll death */
+	/** 死亡布娃娃状态使用的碰撞配置名 */
 	UPROPERTY(EditAnywhere, Category="Damage")
 	FName RagdollCollisionProfile = FName("Ragdoll");
 
-	/** Time to wait after death before destroying this actor */
+	/** 死亡后销毁此Actor前的等待时间 */
 	UPROPERTY(EditAnywhere, Category="Damage")
 	float DeferredDestructionTime = 5.0f;
 
-	/** Team byte for this character */
+	/** 此角色的队伍编号 */
 	UPROPERTY(EditAnywhere, Category="Team")
 	uint8 TeamByte = 1;
 
-	/** Pointer to the equipped weapon */
+	/** 已装备武器的指针 */
 	TObjectPtr<AShooterWeapon> Weapon;
 
-	/** Type of weapon to spawn for this character */
+	/** 为此角色生成的武器类型 */
 	UPROPERTY(EditAnywhere, Category="Weapon")
 	TSubclassOf<AShooterWeapon> WeaponClass;
 
-	/** Name of the first person mesh weapon socket */
+	/** 第一人称网格体武器插槽名 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Weapons")
 	FName FirstPersonWeaponSocket = FName("HandGrip_R");
 
-	/** Name of the third person mesh weapon socket */
+	/** 第三人称网格体武器插槽名 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category ="Weapons")
 	FName ThirdPersonWeaponSocket = FName("HandGrip_R");
 
-	/** Max range for aiming calculations */
+	/** 瞄准计算的最大距离 */
 	UPROPERTY(EditAnywhere, Category="Aim")
 	float AimRange = 10000.0f;
 
-	/** Cone variance to apply while aiming */
+	/** 瞄准时施加的锥形偏差 */
 	UPROPERTY(EditAnywhere, Category="Aim")
 	float AimVarianceHalfAngle = 10.0f;
 
-	/** Minimum vertical offset from the target center to apply when aiming */
+	/** 瞄准时目标中心的最小垂直偏移 */
 	UPROPERTY(EditAnywhere, Category="Aim")
 	float MinAimOffsetZ = -35.0f;
 
-	/** Maximum vertical offset from the target center to apply when aiming */
+	/** 瞄准时目标中心的最大垂直偏移 */
 	UPROPERTY(EditAnywhere, Category="Aim")
 	float MaxAimOffsetZ = -60.0f;
 
-	/** Actor currently being targeted */
+	/** 当前瞄准的Actor */
 	TObjectPtr<AActor> CurrentAimTarget;
 
-	/** If true, this character is currently shooting its weapon */
+	/** 为true时，此角色正在射击 */
 	bool bIsShooting = false;
 
-	/** If true, this character has already died */
+	/** 为true时，此角色已经死亡 */
 	bool bIsDead = false;
 
-	/** Deferred destruction on death timer */
+	/** 死亡延迟销毁定时器 */
 	FTimerHandle DeathTimer;
 
 public:
 
-	/** Delegate called when this NPC dies */
+	/** 此NPC死亡时调用的委托 */
 	FPawnDeathDelegate OnPawnDeath;
 
 protected:
 
-	/** Gameplay initialization */
+	/** 游戏初始化 */
 	virtual void BeginPlay() override;
 
-	/** Gameplay cleanup */
+	/** 游戏清理 */
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 
-	/** Handle incoming damage */
+	/** 处理受到的伤害 */
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 
 	//~Begin IShooterWeaponHolder interface
 
-	/** Attaches a weapon's meshes to the owner */
+	/** 将武器网格体挂载到持有者身上 */
 	virtual void AttachWeaponMeshes(AShooterWeapon* Weapon) override;
 
-	/** Plays the firing montage for the weapon */
+	/** 播放武器开火动画蒙太奇 */
 	virtual void PlayFiringMontage(UAnimMontage* Montage) override;
 
-	/** Applies weapon recoil to the owner */
+	/** 给持有者施加后坐力 */
 	virtual void AddWeaponRecoil(float Recoil) override;
 
-	/** Updates the weapon's HUD with the current ammo count */
+	/** 用当前弹药数更新武器HUD */
 	virtual void UpdateWeaponHUD(int32 CurrentAmmo, int32 MagazineSize) override;
 
-	/** Calculates and returns the aim location for the weapon */
+	/** 计算并返回武器的瞄准位置 */
 	virtual FVector GetWeaponTargetLocation() override;
 
-	/** Gives a weapon of this class to the owner */
+	/** 将此类型的武器给予持有者 */
 	virtual void AddWeaponClass(const TSubclassOf<AShooterWeapon>& WeaponClass) override;
 
-	/** Activates the passed weapon */
+	/** 激活指定的武器 */
 	virtual void OnWeaponActivated(AShooterWeapon* Weapon) override;
 
-	/** Deactivates the passed weapon */
+	/** 停用指定的武器 */
 	virtual void OnWeaponDeactivated(AShooterWeapon* Weapon) override;
 
-	/** Notifies the owner that the weapon cooldown has expired and it's ready to shoot again */
+	/** 通知持有者武器冷却已结束，可以再次射击 */
 	virtual void OnSemiWeaponRefire() override;
 
 	//~End IShooterWeaponHolder interface
 
 protected:
 
-	/** Called when HP is depleted and the character should die */
+	/** 血量耗尽且角色应死亡时调用 */
 	void Die();
 
-	/** Called after death to destroy the actor */
+	/** 死亡后销毁Actor时调用 */
 	void DeferredDestruction();
 
 public:
 
-	/** Signals this character to start shooting at the passed actor */
+	/** 通知此角色开始向指定Actor射击 */
 	void StartShooting(AActor* ActorToShoot);
 
-	/** Signals this character to stop shooting */
+	/** 通知此角色停止射击 */
 	void StopShooting();
 };

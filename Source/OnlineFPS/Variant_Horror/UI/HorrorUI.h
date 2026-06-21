@@ -9,8 +9,8 @@
 class AHorrorCharacter;
 
 /**
- *  Simple UI for a first person horror game
- *  Manages character sprint meter display
+ *  第一人称恐怖游戏的简单UI
+ *  管理角色冲刺体力条显示
  */
 UCLASS(abstract)
 class ONLINEFPS_API UHorrorUI : public UUserWidget
@@ -19,24 +19,24 @@ class ONLINEFPS_API UHorrorUI : public UUserWidget
 	
 public:
 
-	/** Sets up delegate listeners for the passed character */
+	/** 为传入的角色设置委托监听器 */
 	void SetupCharacter(AHorrorCharacter* HorrorCharacter);
 
-	/** Called when the character's sprint meter is updated */
+	/** 角色冲刺体力值更新时调用 */
 	UFUNCTION()
 	void OnSprintMeterUpdated(float Percent);
 
-	/** Called when the character's sprint state changes */
+	/** 角色冲刺状态变化时调用 */
 	UFUNCTION()
 	void OnSprintStateChanged(bool bSprinting);
 
 protected:
 
-	/** Passes control to Blueprint to update the sprint meter widgets */
+	/** 将控制权交给蓝图以更新冲刺体力条控件 */
 	UFUNCTION(BlueprintImplementableEvent, Category="Horror", meta = (DisplayName = "Sprint Meter Updated"))
 	void BP_SprintMeterUpdated(float Percent);
 
-	/** Passes control to Blueprint to update the sprint meter status */
+	/** 将控制权交给蓝图以更新冲刺体力状态 */
 	UFUNCTION(BlueprintImplementableEvent, Category="Horror", meta = (DisplayName = "Sprint State Changed"))
 	void BP_SprintStateChanged(bool bSprinting);
 };
