@@ -1,0 +1,22 @@
+# Ignore everything by default
+*
+
+# Allow .gitignore
+!.gitignore
+
+# === Custom C++ Source Code ===
+# Re-include directory paths (git requires each level to be un-ignored)
+!Source/
+!Source/OnlineFPS/
+!Source/OnlineFPS/Variant_Horror/
+!Source/OnlineFPS/Variant_Horror/**
+!Source/OnlineFPS/Variant_Shooter/
+!Source/OnlineFPS/Variant_Shooter/**
+
+# Re-include specific custom files
+!Source/OnlineFPS/CoopGameMode.cpp
+!Source/OnlineFPS/CoopGameMode.h
+
+# Still ignore generated/build artifacts inside source dirs
+Source/**/*.gen.cpp
+Source/**/*.gen.h
